@@ -21,13 +21,7 @@ class UserController extends ApiController
      */
     public function index()
     {
-        $minutes = Carbon::now()->addMinutes(10);
-
-        $users = Cache::remember('api::users', $minutes, function () {
-            return User::all();
-        });
-
-        return $this->respond($users);
+        return $this->respond($this->usersCache());
     }
     /**
      * Return your user
@@ -36,7 +30,7 @@ class UserController extends ApiController
      */
     public function show($id)
     {
-        $user = User::find(Auth::user()->id);
+        $user = $this->usersCache()->find($id);
 
         if ($user) {
             return $this->respond($user);
@@ -54,7 +48,7 @@ class UserController extends ApiController
         try {
             $user = (new User())->createUser($request->all());
 
-            return $this->respond($user);
+            return $this->clearCache()->respond($user);
         } catch (Exception $e) {
             return $this->setStatusCode(400)
                 ->respondWithError('Could not complete this operation!');
@@ -70,12 +64,13 @@ class UserController extends ApiController
      */
     public function update(UserUpdateRequest $request, $id)
     {
-        $user = User::find($id);
+        $user = $this->usersCache()->find($id);
         $this->authorize('update', $user);
 
         try {
             $user->update($request->all());
-            return $this->respond($user);
+
+            return $this->clearCache()->respond($user);
         } catch (\Exception $e) {
             return $this->setStatusCode(400)
                 ->respondWithError('Could not be update the content!');
@@ -90,14 +85,38 @@ class UserController extends ApiController
      */
     public function destroy($id)
     {
-        $user = User::find($id);
+        $user = $this->usersCache()->find($id);
         $this->authorize('delete', $user);
 
         try {
             $user->delete();
-            return $this->respond('User deleted!');
+
+            return $this->clearCache()->respond('User deleted!');
         } catch (\Exception $e) {
             return $this->respondWithError('Cannot delete user!');
         }
+    }
+    /**
+     * Return all users in cache
+     *
+     * @return void
+     */
+    protected function usersCache()
+    {
+        $minutes = Carbon::now()->addMinutes(10);
+
+        return Cache::remember('api::users', $minutes, function () {
+            return User::all();
+        });
+    }
+    /**
+     * Clear Cache Users
+     *
+     * @return void
+     */
+    protected function clearCache()
+    {
+        Cache::forget('api::users');
+        return $this;
     }
 }

@@ -16,30 +16,13 @@ use App\Libraries\Factory\FornecedorFactory;
 class FornecedoresController extends ApiController
 {
     /**
-     * Clear cache keys from api
-     *
-     * @return void
-     */
-    protected function clearCache()
-    {
-        Cache::forget('api::fornecedores');
-        Cache::forget('api::totalMensalidades');
-        return $this;
-    }
-    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        $minutes = Carbon::now()->addMinutes(10);
-
-        $fornecedores = Cache::remember('api::fornecedores', $minutes, function () {
-            return User::find(Auth::user()->id)->fornecedores;
-        });
-
-        return $this->respond($fornecedores);
+        return $this->respond($this->fornecedoresCache());
     }
 
     /**
@@ -50,7 +33,7 @@ class FornecedoresController extends ApiController
      */
     public function show($id)
     {
-        $fornecedor = Fornecedor::find($id);
+        $fornecedor = $this->fornecedoresCache()->find($id);
         $this->authorize('show', $fornecedor);
 
         if ($fornecedor) {
@@ -89,7 +72,7 @@ class FornecedoresController extends ApiController
      */
     public function update(Request $request, $id)
     {
-        $fornecedor = Fornecedor::find($id);
+        $fornecedor = $this->fornecedoresCache()->find($id);
         $this->authorize('update', $fornecedor);
 
         try {
@@ -106,9 +89,9 @@ class FornecedoresController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($fornecedorId)
+    public function destroy($id)
     {
-        $fornecedor =  Fornecedor::find($fornecedorId);
+        $fornecedor =  $this->fornecedoresCache()->find($id);
         $this->authorize('delete', $fornecedor);
 
         if ($fornecedor) {
@@ -126,15 +109,34 @@ class FornecedoresController extends ApiController
     public function totalMensalidades()
     {
         try {
-            $minutes = Carbon::now()->addMinutes(10);
-
-            $total = Cache::remember('api::totalMensalidades', $minutes, function () {
-                return (new FornecedorFactory())->totalMensalidades(User::find(Auth::user()->id));
-            });
+            $total = (new FornecedorFactory(Auth::user()->id))->totalMensalidades();
 
             return $this->respond(['total' => $total]);
         } catch (\Exception $e) {
             return $this->respondInternalError();
         }
+    }
+    /**
+     * Fornecedores on cache
+     *
+     * @return this
+     */
+    protected function fornecedoresCache()
+    {
+        $minutes = Carbon::now()->addMinutes(10);
+
+        return Cache::remember('api::fornecedores', $minutes, function () {
+            return User::find(Auth::user()->id)->fornecedores;
+        });
+    }
+    /**
+     * Clear cache keys from api
+     *
+     * @return this
+     */
+    protected function clearCache()
+    {
+        Cache::forget('api::fornecedores');
+        return $this;
     }
 }
