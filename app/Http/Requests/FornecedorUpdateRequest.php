@@ -16,7 +16,7 @@ class FornecedorUpdateRequest extends FormRequest
         return true;
     }
 
-    /**
+     /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -24,7 +24,19 @@ class FornecedorUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'mensalidade' => 'int'
+        ];
+    }
+
+      /**
+     * Message For the requirements
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'mensalidade.int' => 'Mensalidade deve ser um valor numérico!'
         ];
     }
 }

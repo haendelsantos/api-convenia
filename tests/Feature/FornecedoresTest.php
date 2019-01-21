@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use GuzzleHttp\Client;
 use Faker\Factory as Faker;
 
-class FornecedoresTest extends TestCasexxxx
+class FornecedoresTest extends TestCase
 {
 
     const ROUTE_API = 'http://localhost:8000/api/v1/fornecedores/';

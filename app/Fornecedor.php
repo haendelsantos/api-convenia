@@ -7,21 +7,12 @@ use Laravel\Passport\Bridge\User;
 
 class Fornecedor extends Model
 {
-    const TABLE_NAME = 'fornecedores';
-    const COLUMN_PRIMARY_KEY = 'id';
-    const COLUMN_NAME = 'name';
-    const COLUMN_EMAIL = 'email';
-    const COLUMN_MENSALIDADE = 'mensalidade';
-    const COLUMN_FOREIGN_KEY_USER = 'user_id';
-    const COLUMN_CREATED_AT = 'created_at';
-    const COLUMN_UPDATED_AT = 'updated_at';
-
     /**
      * Table name attribute
      *
      * @var string
      */
-    protected $table = self::TABLE_NAME;
+    protected $table = 'fornecedores';
     //
      /**
      * The attributes that are mass assignable.
@@ -29,11 +20,11 @@ class Fornecedor extends Model
      * @var array
      */
     protected $fillable = [
-        self::COLUMN_PRIMARY_KEY,
-        self::COLUMN_NAME,
-        self::COLUMN_EMAIL,
-        self::COLUMN_MENSALIDADE,
-        self::COLUMN_FOREIGN_KEY_USER,
+        'id',
+        'name',
+        'email',
+        'mensalidade',
+        'user_id'
     ];
 
     /**
@@ -42,8 +33,8 @@ class Fornecedor extends Model
      * @var array
      */
     protected $hidden = [
-        self::COLUMN_CREATED_AT,
-        self::COLUMN_UPDATED_AT,
+        'created_at',
+        'updated_at'
     ];
     /**
      * Return the user a

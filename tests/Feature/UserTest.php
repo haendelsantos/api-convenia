@@ -51,7 +51,7 @@ class UserTest extends TestCase
 
         $user = json_decode((string) $res->getBody());
         $this->assertEquals($res->getStatusCode(), 200);
-
+        $this->assertNotEquals(0,$user->id);
         return $user->id;
     }
     /**
