@@ -77,7 +77,10 @@ class User extends Authenticatable
      */
     public function fornecedores()
     {
-        return $this->hasMany(Fornecedor::class,Fornecedor::COLUMN_FOREIGN_KEY_USER,self::COLUMN_PRIMARY_KEY);
+        return $this->hasMany(
+            Fornecedor::class,
+            Fornecedor::COLUMN_FOREIGN_KEY_USER,
+            self::COLUMN_PRIMARY_KEY
+        );
     }
-
 }

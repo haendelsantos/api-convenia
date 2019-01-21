@@ -23,7 +23,7 @@ class UserController extends ApiController
     {
         $minutes = Carbon::now()->addMinutes(10);
 
-        $users = Cache::remember('api::users',$minutes,function(){
+        $users = Cache::remember('api::users', $minutes, function () {
             return User::all();
         });
 
@@ -38,7 +38,7 @@ class UserController extends ApiController
     {
         $user = User::find(Auth::user()->id);
 
-        if($user){
+        if ($user) {
             return $this->respond($user);
         }
 
@@ -51,13 +51,11 @@ class UserController extends ApiController
      */
     public function store(UserStoreRequest $request)
     {
-        try{
-
+        try {
             $user = (new User())->createUser($request->all());
 
             return $this->respond($user);
-        } catch(Exception $e){
-
+        } catch (Exception $e) {
             return $this->setStatusCode(400)
                 ->respondWithError('Could not complete this operation!');
         }
@@ -70,17 +68,15 @@ class UserController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UserUpdateRequest $request,$id)
+    public function update(UserUpdateRequest $request, $id)
     {
         $user = User::find($id);
-        $this->authorize('update',$user);
+        $this->authorize('update', $user);
 
-        try{
-
+        try {
             $user->update($request->all());
             return $this->respond($user);
-        }catch(\Exception $e){
-
+        } catch (\Exception $e) {
             return $this->setStatusCode(400)
                 ->respondWithError('Could not be update the content!');
         }
@@ -95,15 +91,12 @@ class UserController extends ApiController
     public function destroy($id)
     {
         $user = User::find($id);
-        $this->authorize('delete',$user);
+        $this->authorize('delete', $user);
 
-        try{
-
+        try {
             $user->delete();
-
             return $this->respond('User deleted!');
-        } catch(\Exception $e){
-
+        } catch (\Exception $e) {
             return $this->respondWithError('Cannot delete user!');
         }
     }

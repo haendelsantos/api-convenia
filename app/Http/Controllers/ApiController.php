@@ -62,7 +62,7 @@ class ApiController extends Controller
      */
     protected function respond($data, $headers = [])
     {
-        return Response::json($data,$this->getStatusCode(),$headers);
+        return Response::json($data, $this->getStatusCode(), $headers);
     }
 
     /**

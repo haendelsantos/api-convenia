@@ -9,7 +9,6 @@ use GuzzleHttp\Client;
 use Faker\Factory as Faker;
 use Laravel\Passport\Passport;
 
-
 class UserTest extends TestCase
 {
     const ROUTE_API = 'http://localhost:8000/api/v1/user/';
@@ -51,7 +50,7 @@ class UserTest extends TestCase
         ]);
 
         $user = json_decode((string) $res->getBody());
-        $this->assertEquals($res->getStatusCode(),200);
+        $this->assertEquals($res->getStatusCode(), 200);
 
         return $user->id;
     }

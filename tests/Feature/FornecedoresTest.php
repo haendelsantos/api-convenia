@@ -8,8 +8,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use GuzzleHttp\Client;
 use Faker\Factory as Faker;
 
-class FornecedoresTest extends TestCase
+class FornecedoresTest extends TestCasexxxx
 {
+
     const ROUTE_API = 'http://localhost:8000/api/v1/fornecedores/';
     const ROUTE_API_TOTAL_MENSALIDADE = 'http://localhost:8000/api/v1/total-mensalidade/';
       /**
@@ -35,14 +36,18 @@ class FornecedoresTest extends TestCase
      */
     public function testTotalMensalidade()
     {
-        $res = (new Client())->request('GET', self::ROUTE_API_TOTAL_MENSALIDADE, [
-            'headers' => [
-                'Authorization' => env("PERSONAL_AUTH_KEY"),
-                'Accept' => 'application/json'
+        $res = (new Client())->request(
+            'GET',
+            self::ROUTE_API_TOTAL_MENSALIDADE,
+            [
+                'headers' => [
+                    'Authorization' => env("PERSONAL_AUTH_KEY"),
+                    'Accept' => 'application/json'
+                ]
             ]
-        ]);
+        );
         $totalMensalidade = json_decode((string) $res->getBody());
-        $this->assertGreaterThan(0,$totalMensalidade->total);
+        $this->assertGreaterThan(0, $totalMensalidade->total);
     }
     /**
      * ROUTE /fornecedores POST
@@ -52,17 +57,22 @@ class FornecedoresTest extends TestCase
     private function canCreate()
     {
         $faker = Faker::create();
-        $res = (new Client())->request('POST', self::ROUTE_API, [
-            'headers' => [
-                'Authorization' => env("PERSONAL_AUTH_KEY"),
-                'Accept' => 'application/json'
-            ],
-            'form_params' => [
-                'name' => $faker->firstName,
-                'email' => $faker->email,
-                'mensalidade' => 100.00,
+        $res = (new Client())->request(
+            'POST',
+            self::ROUTE_API,
+            [
+                'headers' => [
+                    'Authorization' => env("PERSONAL_AUTH_KEY"),
+                    'Accept' => 'application/json'
+                ],
+                'form_params' => [
+                    'name' => $faker->firstName,
+                    'email' => $faker->email,
+                    'mensalidade' => 100.00,
+                ]
             ]
-        ]);
+        );
+
         $fornecedor = json_decode((string) $res->getBody());
         return $fornecedor->id;
     }
@@ -73,12 +83,16 @@ class FornecedoresTest extends TestCase
      */
     private function canList()
     {
-        $res = (new Client())->request('GET', self::ROUTE_API, [
-            'headers' => [
-                'Authorization' => env("PERSONAL_AUTH_KEY"),
-                'Accept' => 'application/json'
+        $res = (new Client())->request(
+            'GET',
+            self::ROUTE_API,
+            [
+                'headers' => [
+                    'Authorization' => env("PERSONAL_AUTH_KEY"),
+                    'Accept' => 'application/json'
+                ]
             ]
-        ]);
+        );
         $fornecedores = json_decode((string) $res->getBody());
 
         return $this->assertEquals($res->getStatusCode(), 200);
@@ -103,17 +117,21 @@ class FornecedoresTest extends TestCase
     {
         $fornecedorBefore = $this->getFornecedor($fornecedorId);
         $faker = Faker::create();
-        $res = (new Client())->request('PUT', self::ROUTE_API . $fornecedorId, [
-            'headers' => [
-                'Authorization' => env("PERSONAL_AUTH_KEY"),
-                'Accept' => 'application/json'
-            ],
-            'form_params' => [
-                'email' => $faker->email,
+        $res = (new Client())->request(
+            'PUT',
+            self::ROUTE_API . $fornecedorId,
+            [
+                'headers' => [
+                    'Authorization' => env("PERSONAL_AUTH_KEY"),
+                    'Accept' => 'application/json'
+                ],
+                'form_params' => [
+                    'email' => $faker->email
+                ]
             ]
-        ]);
+        );
         $fornecedor = $this->getFornecedor($fornecedorId);
-        $this->assertNotEquals($fornecedorBefore->email,$fornecedor->email);
+        $this->assertNotEquals($fornecedorBefore->email, $fornecedor->email);
     }
     /**
      * ROUTE /fornecedores/{id} DELETE

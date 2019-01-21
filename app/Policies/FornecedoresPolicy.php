@@ -46,5 +46,4 @@ class FornecedoresPolicy
     {
         return $user->id === $fornecedores->user_id;
     }
-
 }

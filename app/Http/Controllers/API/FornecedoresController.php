@@ -35,7 +35,7 @@ class FornecedoresController extends ApiController
     {
         $minutes = Carbon::now()->addMinutes(10);
 
-        $fornecedores = Cache::remember('api::fornecedores',$minutes,function(){
+        $fornecedores = Cache::remember('api::fornecedores', $minutes, function () {
             return User::find(Auth::user()->id)->fornecedores;
         });
 
@@ -51,9 +51,9 @@ class FornecedoresController extends ApiController
     public function show($id)
     {
         $fornecedor = Fornecedor::find($id);
-        $this->authorize('show',$fornecedor);
+        $this->authorize('show', $fornecedor);
 
-        if($fornecedor){
+        if ($fornecedor) {
             return $this->respond($fornecedor);
         }
 
@@ -68,16 +68,13 @@ class FornecedoresController extends ApiController
      */
     public function store(FornecedorStoreRequest $request)
     {
-        try{
-
+        try {
             $fornecedor = User::find(Auth::user()->id)
                 ->fornecedores()
                 ->create($request->all());
 
-            return $this->clearCache()
-                ->respond($fornecedor);
-        }catch(\Exception $e){
-
+            return $this->clearCache()->respond($fornecedor);
+        } catch (\Exception $e) {
             return $this->respondInternalError('it was not possible to register');
         }
     }
@@ -93,16 +90,12 @@ class FornecedoresController extends ApiController
     public function update(Request $request, $id)
     {
         $fornecedor = Fornecedor::find($id);
-        $this->authorize('update',$fornecedor);
+        $this->authorize('update', $fornecedor);
 
-        try{
-
+        try {
             $fornecedor->update($request->all());
-
-            return $this->clearCache()
-                ->respond($fornecedor);
-        }catch(\Exception $e){
-
+            return $this->clearCache()->respond($fornecedor);
+        } catch (\Exception $e) {
             return $this->respondInternalError('it was not possible to register');
         }
     }
@@ -116,14 +109,11 @@ class FornecedoresController extends ApiController
     public function destroy($fornecedorId)
     {
         $fornecedor =  Fornecedor::find($fornecedorId);
-        $this->authorize('delete',$fornecedor);
+        $this->authorize('delete', $fornecedor);
 
-        if($fornecedor){
-
+        if ($fornecedor) {
             $fornecedor->delete();
-
-            return $this->clearCache()
-                ->respond(['message' =>'Fornecedor deleted!']);
+            return $this->clearCache()->respond(['message' =>'Fornecedor deleted!']);
         }
 
         return $this->respondInternalError('Fornecedor Not Found!');
@@ -135,18 +125,15 @@ class FornecedoresController extends ApiController
      */
     public function totalMensalidades()
     {
-        try{
-            
+        try {
             $minutes = Carbon::now()->addMinutes(10);
 
-            $total = Cache::remember('api::totalMensalidades',$minutes,function(){
-
-                return (new FornecedorFactory())
-                    ->totalMensalidades(User::find(Auth::user()->id));
+            $total = Cache::remember('api::totalMensalidades', $minutes, function () {
+                return (new FornecedorFactory())->totalMensalidades(User::find(Auth::user()->id));
             });
 
             return $this->respond(['total' => $total]);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return $this->respondInternalError();
         }
     }

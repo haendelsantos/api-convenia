@@ -2,7 +2,8 @@
 
 use App\User;
 
-interface FornecedorInterface {
+interface FornecedorInterface
+{
 
     /**
      * Get total of mensalidades
