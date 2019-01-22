@@ -4,13 +4,11 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Fornecedor;
 use App\Http\Controllers\ApiController;
 use App\User;
 use App\Http\Requests\FornecedorStoreRequest;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
-use Symfony\Component\HttpFoundation\Response as ResponseHTTP;
 use App\Libraries\Factory\FornecedorFactory;
 
 class FornecedoresController extends ApiController
@@ -28,7 +26,8 @@ class FornecedoresController extends ApiController
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -46,7 +45,8 @@ class FornecedoresController extends ApiController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(FornecedorStoreRequest $request)
@@ -62,21 +62,22 @@ class FornecedoresController extends ApiController
         }
     }
 
-
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int                      $id
+     *
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(FornecedorUpdateRequest $request, $id)
     {
         $fornecedor = $this->fornecedoresCache()->find($id);
         $this->authorize('update', $fornecedor);
 
         try {
             $fornecedor->update($request->all());
+
             return $this->clearCache()->respond($fornecedor);
         } catch (\Exception $e) {
             return $this->respondInternalError('it was not possible to register');
@@ -86,25 +87,26 @@ class FornecedoresController extends ApiController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $fornecedor =  $this->fornecedoresCache()->find($id);
+        $fornecedor = $this->fornecedoresCache()->find($id);
         $this->authorize('delete', $fornecedor);
 
         if ($fornecedor) {
             $fornecedor->delete();
-            return $this->clearCache()->respond(['message' =>'Fornecedor deleted!']);
+
+            return $this->clearCache()->respond(['message' => 'Fornecedor deleted!']);
         }
 
         return $this->respondInternalError('Fornecedor Not Found!');
     }
+
     /**
-     * Retorna o total de mensalidades
-     *
-     * @return void
+     * Retorna o total de mensalidades.
      */
     public function totalMensalidades()
     {
@@ -116,10 +118,11 @@ class FornecedoresController extends ApiController
             return $this->respondInternalError();
         }
     }
+
     /**
-     * Fornecedores on cache
+     * Fornecedores on cache.
      *
-     * @return this
+     * @return $this
      */
     protected function fornecedoresCache()
     {
@@ -129,14 +132,16 @@ class FornecedoresController extends ApiController
             return User::find(Auth::user()->id)->fornecedores;
         });
     }
+
     /**
-     * Clear cache keys from api
+     * Clear cache keys from api.
      *
-     * @return this
+     * @return $this
      */
     protected function clearCache()
     {
         Cache::forget('api::fornecedores');
+
         return $this;
     }
 }
